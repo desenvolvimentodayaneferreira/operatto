@@ -1,0 +1,12 @@
+node_modules/
+instalador/
+*.log
+.env
+*.db
+*.db-*
+dados-dev/
+
+# Android: arquivos gerados e chave de assinatura (guardar cópia em local seguro!)
+android/build/
+android/saida/
+android/assinatura/

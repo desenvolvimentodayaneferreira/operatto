@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Operatto</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { color-scheme: dark; }
+      body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 60% 0%, #1a191d 0, #0c0b0e 60%); color: #f0edf2; font: 16px/1.45 system-ui, sans-serif; }
+      main { max-width: 520px; margin: 0 auto; padding: 28px 18px 40px; display: flex; flex-direction: column; gap: 16px; }
+      header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+      header img { width: 56px; height: 56px; border-radius: 14px; }
+      header b { display: block; font-size: 22px; letter-spacing: .12em; color: #f4d77b; }
+      header small { color: #a5a1ac; }
+      h1 { font-size: 21px; margin: 0; }
+      p { margin: 0; color: #c6c2cc; }
+      .cartao { background: #161518; border: 1px solid #2f2e33; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+      .aviso { background: #3a1512; border-color: #d9534a; color: #ffd7d3; }
+      .aviso p { color: #ffd7d3; }
+      button { font: inherit; color: inherit; cursor: pointer; }
+      .caixa { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #2f2e33; background: #1e1d21; text-align: left; }
+      .caixa:active { border-color: #7b3fb0; background: #1f1430; }
+      .caixa span { font-size: 26px; }
+      .caixa b { display: block; font-size: 17px; }
+      .caixa small { color: #a5a1ac; }
+      .btn { min-height: 52px; border-radius: 14px; border: 1px solid #2f2e33; background: #1e1d21; font-weight: 700; }
+      .btn.primario { background: #7b3fb0; border-color: #7b3fb0; color: #fff; }
+      input { width: 100%; min-height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid #2f2e33; background: #0f0e11; color: #f0edf2; font: inherit; font-size: 17px; }
+      label.chave { display: flex; align-items: center; gap: 12px; }
+      label.chave input { width: 26px; min-height: 26px; accent-color: #7b3fb0; }
+      .sutil { color: #a5a1ac; font-size: 14px; }
+      .girando { width: 20px; height: 20px; border: 3px solid #3a3d37; border-top-color: #7b3fb0; border-radius: 50%; animation: girar .8s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+      @keyframes girar { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="icone.png" alt="" />
+        <div><b>OPERATTO</b><small>Gestão para restaurantes · by KAI</small></div>
+      </header>
+
+      <div id="aviso" class="cartao aviso" hidden>
+        <b>Sem conexão com o caixa principal</b>
+        <p>Confira se o computador do caixa está ligado, com o Operatto aberto, e se este celular está no Wi-Fi do restaurante.</p>
+        <button class="btn primario" id="tentar">Tentar de novo</button>
+      </div>
+
+      <section class="cartao">
+        <h1>Conectar ao caixa</h1>
+        <p class="sutil">O celular precisa estar no mesmo Wi-Fi do computador do caixa principal.</p>
+        <div id="lista"></div>
+        <button class="btn" id="procurar">Procurar de novo</button>
+      </section>
+
+      <section class="cartao">
+        <b>Digitar o endereço</b>
+        <p class="sutil">Aparece no caixa principal em Configurações → Conectar celulares (ex.: 192.168.0.10:8787).</p>
+        <input id="endereco" inputmode="url" placeholder="192.168.0.10:8787" autocomplete="off" autocapitalize="off" />
+        <button class="btn primario" id="usar">Conectar</button>
+      </section>
+
+      <section class="cartao">
+        <label class="chave"><input type="checkbox" id="telaLigada" /> <span>Manter a tela sempre ligada<br /><small class="sutil">Para o tablet ou TV da cozinha.</small></span></label>
+      </section>
+
+      <p class="sutil" id="rede"></p>
+    </main>
+
+    <script>
+      "use strict";
+      const app = window.OperattoApp;
+      const $ = (s) => document.querySelector(s);
+      const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+      function procurar() {
+        $("#lista").innerHTML = '<p><span class="girando"></span>Procurando o caixa principal…</p>';
+        // Deixa a tela mostrar o aviso antes de esperar a resposta da rede.
+        setTimeout(() => {
+          let caixas = [];
+          try { caixas = JSON.parse(app.procurar()); } catch (e) { caixas = []; }
+          const atual = app.servidorAtual();
+          $("#lista").innerHTML = caixas.length
+            ? caixas.map((c) => `<button class="caixa" data-endereco="${esc(c.endereco)}"><span>🖥️</span><div><b>${esc(c.nome)}</b><small>${esc(c.endereco)}${c.endereco === atual ? " · último usado" : ""}</small></div></button>`).join("")
+            : '<p>Nenhum caixa principal encontrado. Confira o Wi-Fi ou digite o endereço abaixo.</p>';
+          document.querySelectorAll("[data-endereco]").forEach((b) => b.addEventListener("click", () => app.abrir(b.dataset.endereco)));
+        }, 60);
+      }
+
+      function usarDigitado() {
+        let e = $("#endereco").value.trim().replace(/\/+$/, "");
+        if (!e) return;
+        if (!/^https?:\/\//i.test(e)) e = "http://" + e;
+        if (!/:\d+$/.test(e)) e += ":8787";
+        app.abrir(e);
+      }
+
+      $("#procurar").addEventListener("click", procurar);
+      $("#usar").addEventListener("click", usarDigitado);
+      $("#endereco").addEventListener("keydown", (ev) => { if (ev.key === "Enter") usarDigitado(); });
+      $("#tentar").addEventListener("click", () => { const s = app.servidorAtual(); if (s) app.abrir(s); });
+      $("#telaLigada").checked = app.telaLigada();
+      $("#telaLigada").addEventListener("change", (ev) => app.definirTelaLigada(ev.target.checked));
+      $("#endereco").value = app.servidorAtual().replace(/^http:\/\//, "");
+      const ip = app.ipLocal();
+      $("#rede").textContent = ip ? `Este aparelho: ${ip}` : "Este aparelho não está conectado a uma rede.";
+
+      if (location.hash === "#sem-conexao") {
+        $("#aviso").hidden = false;
+        // Tenta reconectar sozinho a cada 10 segundos.
+        setInterval(() => { const s = app.servidorAtual(); if (s) app.abrir(s); }, 10000);
+      }
+      procurar();
+    </script>
+  </body>
+</html>

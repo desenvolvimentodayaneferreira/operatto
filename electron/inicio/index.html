@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'" />
+    <title>Operatto · Configurar este computador</title>
+    <link rel="stylesheet" href="inicio.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../../web/assets/logo.svg" alt="Operatto" />
+        <div><b>OPERATTO</b><small>Configurar este computador</small></div>
+      </header>
+
+      <section id="escolha">
+        <h1>Como este computador será usado?</h1>
+        <div class="opcoes">
+          <button data-modo="servidor">
+            <span>🖥️</span>
+            <b>Caixa principal</b>
+            <small>Guarda todos os dados do restaurante e atende os celulares, a cozinha e os outros computadores. Só um computador do restaurante deve ser o caixa principal.</small>
+          </button>
+          <button data-modo="terminal">
+            <span>🔗</span>
+            <b>Outro computador</b>
+            <small>Cozinha, gerência ou segundo caixa. Conecta ao caixa principal pela rede do restaurante.</small>
+          </button>
+        </div>
+      </section>
+
+      <section id="terminal" hidden>
+        <h1>Conectar ao caixa principal</h1>
+        <p class="sutil">O caixa principal precisa estar ligado, com o Operatto aberto, na mesma rede (Wi-Fi ou cabo).</p>
+        <div id="lista"></div>
+        <div class="linha">
+          <button id="procurar" class="btn">Procurar de novo</button>
+        </div>
+        <details>
+          <summary>Digitar o endereço manualmente</summary>
+          <p class="sutil">O endereço aparece no caixa principal em Configurações → Conectar celulares (ex.: http://192.168.0.10:8787).</p>
+          <div class="linha"><input id="endereco" placeholder="http://192.168.0.10:8787" /><button id="usar" class="btn primario">Conectar</button></div>
+        </details>
+        <p id="erro" class="erro"></p>
+        <button id="voltar" class="link">← Voltar</button>
+      </section>
+    </main>
+    <script src="inicio.js"></script>
+  </body>
+</html>

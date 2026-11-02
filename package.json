@@ -1,0 +1,67 @@
+{
+  "name": "operatto",
+  "productName": "Operatto",
+  "version": "0.2.0",
+  "description": "Operatto by KAI - gestão para restaurantes",
+  "author": "Dayane Ferreira (KAI)",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "servidor": "node servidor/iniciar.js",
+    "check": "node scripts/check.js",
+    "test": "node --test testes/*.test.js",
+    "instalador": "npm run check && electron-builder --win nsis",
+    "autoteste": "node scripts/autoteste.js",
+    "android": "node android/compilar.js"
+  },
+  "build": {
+    "appId": "br.com.kai.operatto",
+    "productName": "Operatto",
+    "copyright": "Operatto é uma tecnologia da KAI — Kaelor Artificial Intelligence",
+    "directories": {
+      "output": "instalador",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "servidor/**/*",
+      "web/**/*",
+      "package.json"
+    ],
+    "electronLanguages": [
+      "pt-BR",
+      "en-US"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "language": "1046",
+      "installerLanguages": [
+        "pt_BR"
+      ],
+      "multiLanguageInstaller": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Operatto",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Operatto-Instalador-${version}.${ext}",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "uninstallDisplayName": "Operatto"
+    }
+  },
+  "devDependencies": {
+    "@fontsource/dm-sans": "5.3.0",
+    "@fontsource/montserrat": "5.3.0",
+    "electron": "44.0.0",
+    "electron-builder": "24.13.3",
+    "qrcode-generator": "2.0.4"
+  }
+}

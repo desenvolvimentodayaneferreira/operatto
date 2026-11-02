@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema escuro sem barra de título, nas cores do Operatto -->
+    <style name="TemaOperatto" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorAccent">#7B3FB0</item>
+        <item name="android:colorPrimary">#0B0D0C</item>
+        <item name="android:navigationBarColor">#0B0D0C</item>
+        <item name="android:statusBarColor">#0B0D0C</item>
+    </style>
+</resources>
